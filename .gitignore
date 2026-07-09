@@ -2,11 +2,13 @@
 scripts/firebase.js
 
 # Dependencias (por si usas npm en el futuro)
+road-education-native/node_modules/
 node_modules/
 
 # Variables de entorno
 .env
 .env.local
+.env.*.local
 
 # Archivos del sistema operativo
 .DS_Store
@@ -14,3 +16,34 @@ Thumbs.db
 
 # Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build de addon nativo (node-gyp / napi)
+build/
+Release/
+Debug/
+*.node
+*.o
+*.obj
+*.pdb
+
+# Cache y temporales
+.cache/
+*.tmp
+*.temp
+
+# Coverage / testing
+coverage/
+.nyc_output/
+
+# Editor
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+*.swo
+
+# Empaquetado npm
+*.tgz
