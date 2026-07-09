@@ -2,24 +2,15 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Car Drift - Login</title>
+  <title>Road Education</title>
+  <link rel="stylesheet" href="styles/auth.css">
 </head>
 <body>
-  <h1>Car Drift</h1>
-  <button id="btnLogin">Iniciar sesión con Google</button>
+  <div id="menu">
+    <h1>Road Education 🚗</h1>
+    <button id="btnJugar">Jugar</button>
+  </div>
 
-  <script type="module" src="scripts/auth.js"></script>
-  <script type="module">
-    import { loginConGoogle, escucharSesion } from "./scripts/auth.js";
-
-    // Si ya hay sesión activa, redirige directo al juego
-    escucharSesion((user) => {
-      if (user) window.location.href = "game.html";
-    });
-
-    document.getElementById("btnLogin").addEventListener("click", () => {
-      loginConGoogle();
-    });
-  </script>
+  <script src="scripts/ui.js"></script>
 </body>
 </html>
