@@ -1,0 +1,23 @@
+{
+  "name": "road-education-native",
+  "version": "1.0.0",
+  "description": "Addon nativo en C++ (N-API) para Road Education: fisica, colisiones, puntaje y niveles.",
+  "private": true,
+  "main": "index.js",
+  "gypfile": true,
+  "scripts": {
+    "build": "node-gyp rebuild",
+    "clean": "node-gyp clean",
+    "test": "node test/test_bindings.js"
+  },
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "node-addon-api": "^8.0.0"
+  },
+  "devDependencies": {
+    "node-gyp": "^12.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
