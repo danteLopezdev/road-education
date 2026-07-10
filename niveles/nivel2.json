@@ -1,0 +1,35 @@
+{
+  "idNivel": 2,
+  "nombre": "Doble cruce",
+  "columnas": 10,
+  "filas": 15,
+  "inicioJugador": { "col": 5, "fila": 14 },
+  "meta": { "col": 5, "fila": 0 },
+  "vidasIniciales": 3,
+  "semaforos": [
+    { "col": 5, "fila": 10, "cicloMs": 2500, "carrilAsociado": 0 },
+    { "col": 5, "fila": 5, "cicloMs": 3200, "carrilAsociado": 1 }
+  ],
+  "carriles": [
+    {
+      "fila": 9,
+      "direccion": 1,
+      "velocidad": 1.2,
+      "autos": [
+        { "colInicial": 0 },
+        { "colInicial": 4 },
+        { "colInicial": 8 }
+      ]
+    },
+    {
+      "fila": 4,
+      "direccion": -1,
+      "velocidad": 1.6,
+      "autos": [
+        { "colInicial": 1 },
+        { "colInicial": 5 },
+        { "colInicial": 9 }
+      ]
+    }
+  ]
+}

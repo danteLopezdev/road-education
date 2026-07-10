@@ -106,3 +106,108 @@ body {
   box-shadow: 0 0 30px rgba(0, 150, 255, 0.35),
               0 8px 25px rgba(0, 0, 0, 0.5);
 }
+/* ---------- Pantalla de victoria ---------- */
+#juegoContainer {
+  position: relative;
+}
+
+#pantallaVictoria {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 8, 14, 0.82);
+  border-radius: 10px;
+  z-index: 20;
+  animation: fundidoEntrada 0.25s ease;
+}
+
+#pantallaVictoria.oculto {
+  display: none;
+}
+
+.panelVictoria {
+  width: 82%;
+  max-width: 320px;
+  padding: 32px 24px;
+  text-align: center;
+  background: rgba(10, 14, 23, 0.95);
+  border: 2px solid rgba(0, 200, 255, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 0 40px rgba(0, 150, 255, 0.35), 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.tituloVictoria {
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #00c8ff;
+  text-shadow: 0 0 12px rgba(0, 200, 255, 0.7);
+  margin-bottom: 12px;
+}
+
+.subtituloVictoria {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.puntajeFinal {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 28px;
+}
+
+.puntajeFinal span {
+  color: #2ecc71;
+  text-shadow: 0 0 10px rgba(46, 204, 113, 0.6);
+}
+
+.botonesVictoria {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.botonesVictoria button {
+  padding: 12px 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+#btnJugarDeNuevo {
+  color: #0a0e17;
+  background: #00c8ff;
+  border: 1px solid #00c8ff;
+}
+
+#btnJugarDeNuevo:hover {
+  background: #33d6ff;
+  transform: translateY(-1px);
+}
+
+#btnSalirVictoria {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+#btnSalirVictoria:hover {
+  background: rgba(255, 70, 70, 0.25);
+  border-color: rgba(255, 70, 70, 0.6);
+  transform: translateY(-1px);
+}
+
+@keyframes fundidoEntrada {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

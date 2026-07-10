@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Auto visto desde arriba, orientado hacia la DERECHA (dirección +1).
+       Para carriles con dirección -1, game.js voltea este sprite en X. -->
+  <g>
+    <!-- sombra -->
+    <ellipse cx="50" cy="54" rx="42" ry="20" fill="#000000" opacity="0.25"/>
+
+    <!-- carrocería -->
+    <rect x="10" y="30" width="80" height="40" rx="14" fill="#ff5050"/>
+    <rect x="10" y="30" width="80" height="40" rx="14" fill="url(#carShade)"/>
+
+    <!-- parabrisas delantero (lado derecho = frente) -->
+    <rect x="62" y="36" width="18" height="28" rx="5" fill="#bfe9ff" opacity="0.9"/>
+    <!-- luneta trasera -->
+    <rect x="20" y="36" width="14" height="28" rx="5" fill="#8fd4f7" opacity="0.7"/>
+
+    <!-- techo -->
+    <rect x="36" y="34" width="24" height="32" rx="6" fill="#c93838"/>
+
+    <!-- faros delanteros -->
+    <rect x="86" y="34" width="4" height="8" rx="2" fill="#fff4c2"/>
+    <rect x="86" y="58" width="4" height="8" rx="2" fill="#fff4c2"/>
+    <!-- luces traseras -->
+    <rect x="10" y="34" width="4" height="6" rx="2" fill="#7a1010"/>
+    <rect x="10" y="60" width="4" height="6" rx="2" fill="#7a1010"/>
+
+    <!-- ruedas -->
+    <rect x="22" y="24" width="14" height="8" rx="3" fill="#1a1a1a"/>
+    <rect x="22" y="68" width="14" height="8" rx="3" fill="#1a1a1a"/>
+    <rect x="64" y="24" width="14" height="8" rx="3" fill="#1a1a1a"/>
+    <rect x="64" y="68" width="14" height="8" rx="3" fill="#1a1a1a"/>
+  </g>
+
+  <defs>
+    <linearGradient id="carShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+</svg>

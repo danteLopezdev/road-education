@@ -7,6 +7,32 @@ const ctx = canvas.getContext('2d');
 const puntajeValorEl = document.getElementById('puntajeValor');
 const vidasValorEl = document.getElementById('vidasValor');
 
+// ---- Pantalla de victoria ----
+const pantallaVictoriaEl = document.getElementById('pantallaVictoria');
+const puntajeFinalValorEl = document.getElementById('puntajeFinalValor');
+let juegoPausado = false; // true mientras se muestra la pantalla de victoria
+
+document.getElementById('btnJugarDeNuevo').addEventListener('click', () => {
+  ocultarPantallaVictoria();
+  indiceNivelActual = 0;
+  cargarNivel(NIVELES[indiceNivelActual]);
+});
+
+document.getElementById('btnSalirVictoria').addEventListener('click', () => {
+  window.api.irAMenu();
+});
+
+function mostrarPantallaVictoria(puntajeFinal) {
+  juegoPausado = true;
+  puntajeFinalValorEl.textContent = puntajeFinal;
+  pantallaVictoriaEl.classList.remove('oculto');
+}
+
+function ocultarPantallaVictoria() {
+  juegoPausado = false;
+  pantallaVictoriaEl.classList.add('oculto');
+}
+
 // ---- Botón Salir: vuelve al menú principal ----
 document.getElementById('btnSalir').addEventListener('click', () => {
   window.api.irAMenu();
@@ -18,22 +44,58 @@ const COLS = 10; // 0..9
 const ROWS = 15; // 0..14
 const COOLDOWN_MS = 150;
 const INVULNERABILIDAD_MS = 800;
+const PUNTOS_POR_AVANCE = 10; // se suma solo cuando el paso acerca al jugador a la meta
+const PUNTOS_POR_NIVEL_COMPLETADO = 50;
 
 // Secuencia de niveles. Agregar 'nivel2.json', 'nivel3.json' aquí cuando
 // existan (ver doc de diseño, sección 9).
-const NIVELES = ['nivel1.json'];
+const NIVELES = ['nivel1.json', 'nivel2.json', 'nivel3.json'];
 let indiceNivelActual = 0;
 
 let celda = { col: 5, fila: 14 };
 let metaActual = null; // { col, fila } -- se fija al cargar el nivel
 let obstaculosCache = [];
 let autosInfo = []; // [{direccion, velocidad, carrilIndex}]
+let carrilesInfo = []; // [{fila}] -- una entrada por carril, usada para dibujar la pista alineada
 let semaforosInfo = []; // [{col, fila, cicloMs, carrilAsociado}]
 let tiempoInicioNivel = 0; // performance.now() al cargar el nivel; base del ciclo de semáforos
 let ultimoMovimiento = 0;
 
 let enInvulnerabilidad = false;
 let procesandoColision = false;
+
+// ---- Sprites ----
+// Las imágenes son 100% reemplazables: solo hay que cambiar la ruta acá
+// abajo (o reemplazar el archivo con el mismo nombre) y todo lo demás
+// (colisión, movimiento, IPC) sigue funcionando igual. Si un archivo no
+// carga (falta, nombre mal escrito, etc.), el juego NO se rompe: cada
+// función de dibujo cae automáticamente a la forma simple (fillRect/arc)
+// que ya teníamos antes.
+
+const RUTAS_SPRITES = {
+  jugador: 'assets/images/player.svg',
+  auto: 'assets/images/car.svg',
+};
+
+const sprites = {};
+
+function precargarSprites() {
+  Object.entries(RUTAS_SPRITES).forEach(([clave, ruta]) => {
+    const img = new Image();
+    img.onerror = () => {
+      console.warn(`[sprites] No se pudo cargar "${clave}" (${ruta}). Se usará la forma de respaldo.`);
+    };
+    img.src = ruta;
+    sprites[clave] = img;
+  });
+}
+
+function spriteListo(clave) {
+  const img = sprites[clave];
+  return !!img && img.complete && img.naturalWidth > 0;
+}
+
+precargarSprites();
 
 // ---- Carga de nivel ----
 
@@ -47,6 +109,7 @@ async function cargarNivel(nombreArchivo) {
   obstaculosCache = await window.api.getObstaculosActivos();
 
   autosInfo = [];
+  carrilesInfo = nivelData.carriles.map((carril) => ({ fila: carril.fila }));
   nivelData.carriles.forEach((carril, carrilIndex) => {
     carril.autos.forEach(() => {
       autosInfo.push({ direccion: carril.direccion, velocidad: carril.velocidad, carrilIndex });
@@ -136,6 +199,9 @@ async function verificarColision() {
     const estadoJugador = await window.api.perderVida();
     pintarVidas(estadoJugador.vidas);
 
+    const estadoPuntaje = await window.api.restarVidaPuntaje();
+    pintarPuntaje(estadoPuntaje);
+
     if (!estadoJugador.estaVivo) {
       await cargarNivel(NIVELES[indiceNivelActual]);
     } else {
@@ -167,12 +233,16 @@ async function manejarNivelCompletado() {
   if (siguienteIndice < NIVELES.length) {
     indiceNivelActual = siguienteIndice;
     await cargarNivel(NIVELES[indiceNivelActual]);
+    // cargarNivel() siempre llama resetPuntaje() (puntaje fresco por nivel),
+    // así que el bono se suma DESPUÉS, como cabecera del nuevo intento --
+    // no antes, porque el reset lo borraría.
+    await actualizarPuntaje(PUNTOS_POR_NIVEL_COMPLETADO);
   } else {
-    // MVP: todavía no existen nivel2.json / nivel3.json. Placeholder
-    // simple hasta que se diseñen -- reemplazar por una pantalla de
-    // victoria real cuando estén listos.
-    alert('¡Nivel completado! Todavía no hay más niveles diseñados.');
-    await cargarNivel(NIVELES[indiceNivelActual]);
+    // Se completaron todos los niveles: NO se llama a cargarNivel() acá
+    // (eso resetearía el puntaje a 0 justo antes de mostrarlo). El bono
+    // final se suma directo sobre el puntaje acumulado del nivel actual.
+    const estadoFinal = await actualizarPuntaje(PUNTOS_POR_NIVEL_COMPLETADO);
+    mostrarPantallaVictoria(estadoFinal.puntos);
   }
 }
 
@@ -186,6 +256,8 @@ const TECLAS = {
 };
 
 async function manejarTecla(event) {
+  if (juegoPausado) return;
+
   const delta = TECLAS[event.key];
   if (!delta) return;
 
@@ -199,6 +271,10 @@ async function manejarTecla(event) {
     return;
   }
 
+  // Se premia el avance real hacia la meta (fila menor), no cualquier
+  // tecla presionada -- moverse de lado o "retroceder" no suma puntos.
+  const esAvanceHaciaLaMeta = nuevaFila < celda.fila;
+
   ultimoMovimiento = ahora;
   celda.col = nuevaCol;
   celda.fila = nuevaFila;
@@ -206,6 +282,10 @@ async function manejarTecla(event) {
   const dxPx = delta.dCol * CELL;
   const dyPx = delta.dFila * CELL;
   await window.api.moverJugador(dxPx, dyPx);
+
+  if (esAvanceHaciaLaMeta) {
+    await actualizarPuntaje(PUNTOS_POR_AVANCE);
+  }
 
   await verificarMeta();
 }
@@ -225,6 +305,7 @@ function pintarVidas(vidas) {
 async function actualizarPuntaje(puntos) {
   const estado = await window.api.sumarPuntos(puntos);
   pintarPuntaje(estado);
+  return estado;
 }
 
 // ---- Dibujo ----
@@ -283,21 +364,112 @@ function dibujarSemaforos() {
   });
 }
 
+function dibujarFondo() {
+  // bg-road.png ya no se usa como fondo del canvas -- se removió a
+  // pedido, ahora solo el color sólido que combina con el resto de la UI
+  // (mismo tono que #gameCanvas en game.css).
+  ctx.fillStyle = '#0d1520';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function dibujarCarriles() {
+  // Dibuja la pista alineada a la fila real de cada carril (tomada del
+  // JSON del nivel), NO a una posición fija en el fondo. Así, si nivel2
+  // o nivel3 ponen los carriles en otra fila, la pista se sigue viendo
+  // en el lugar correcto sin tocar este código ni el fondo.
+  carrilesInfo.forEach(({ fila }) => {
+    const y = fila * CELL;
+
+    // asfalto con leve degradado para que no se vea totalmente plano
+    const grad = ctx.createLinearGradient(0, y, 0, y + CELL);
+    grad.addColorStop(0, '#4a5058');
+    grad.addColorStop(0.5, '#3a3f47');
+    grad.addColorStop(1, '#33383f');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, y, canvas.width, CELL);
+
+    // bordes de vereda (curb) arriba y abajo de la franja
+    ctx.fillStyle = '#d8d8d8';
+    ctx.fillRect(0, y, canvas.width, 3);
+    ctx.fillRect(0, y + CELL - 3, canvas.width, 3);
+
+    // línea central punteada
+    ctx.strokeStyle = '#f2d43d';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([14, 10]);
+    ctx.beginPath();
+    ctx.moveTo(0, y + CELL / 2);
+    ctx.lineTo(canvas.width, y + CELL / 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // cruce peatonal (cebra) centrado en la columna de la meta, si existe
+    if (metaActual) {
+      const anchoCebra = CELL * 1.4;
+      const xCentro = metaActual.col * CELL + CELL / 2;
+      const xInicio = xCentro - anchoCebra / 2;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      const franjas = 5;
+      const anchoFranja = anchoCebra / franjas;
+      for (let i = 0; i < franjas; i += 2) {
+        ctx.fillRect(xInicio + i * anchoFranja, y + 4, anchoFranja * 0.8, CELL - 8);
+      }
+    }
+  });
+}
+
+function dibujarAutos() {
+  if (spriteListo('auto')) {
+    obstaculosCache.forEach((o, index) => {
+      if (!o.activo) return;
+      const info = autosInfo[index];
+      const vaHaciaLaIzquierda = info && info.direccion < 0;
+
+      ctx.save();
+      if (vaHaciaLaIzquierda) {
+        // El sprite car.svg está dibujado mirando a la derecha; para
+        // carriles con dirección -1 lo volteamos en X en vez de pedir
+        // un segundo archivo de imagen.
+        ctx.translate(o.x + o.ancho, o.y);
+        ctx.scale(-1, 1);
+        ctx.drawImage(sprites.auto, 0, 0, o.ancho, o.alto);
+      } else {
+        ctx.drawImage(sprites.auto, o.x, o.y, o.ancho, o.alto);
+      }
+      ctx.restore();
+    });
+  } else {
+    ctx.fillStyle = '#ff5050';
+    obstaculosCache.forEach((o) => {
+      if (o.activo) ctx.fillRect(o.x, o.y, o.ancho, o.alto);
+    });
+  }
+}
+
+function dibujarJugador() {
+  const x = celda.col * CELL;
+  const y = celda.fila * CELL;
+
+  ctx.globalAlpha = enInvulnerabilidad ? 0.4 : 1;
+  if (spriteListo('jugador')) {
+    ctx.drawImage(sprites.jugador, x, y, CELL, CELL);
+  } else {
+    ctx.fillStyle = '#00c8ff';
+    ctx.fillRect(x, y, CELL, CELL);
+  }
+  ctx.globalAlpha = 1;
+}
+
 function dibujar() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  dibujarFondo();
+  dibujarCarriles();
   dibujarMeta();
   dibujarSemaforos();
-
-  ctx.fillStyle = '#ff5050';
-  obstaculosCache.forEach((o) => {
-    if (o.activo) ctx.fillRect(o.x, o.y, o.ancho, o.alto);
-  });
-
-  ctx.globalAlpha = enInvulnerabilidad ? 0.4 : 1;
-  ctx.fillStyle = '#00c8ff';
-  ctx.fillRect(celda.col * CELL, celda.fila * CELL, CELL, CELL);
-  ctx.globalAlpha = 1;
+  dibujarAutos();
+  dibujarJugador();
 }
 
 // ---- Loop principal ----
@@ -308,9 +480,11 @@ function loop(timestamp) {
   if (ultimoTimestamp === null) ultimoTimestamp = timestamp;
   ultimoTimestamp = timestamp;
 
-  actualizarAutos();
-  verificarColision();
-  dibujar();
+  if (!juegoPausado) {
+    actualizarAutos();
+    verificarColision();
+    dibujar();
+  }
 
   requestAnimationFrame(loop);
 }

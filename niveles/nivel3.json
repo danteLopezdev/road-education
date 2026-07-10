@@ -1,0 +1,48 @@
+{
+  "idNivel": 3,
+  "nombre": "Triple carril, un cruce libre",
+  "columnas": 10,
+  "filas": 15,
+  "inicioJugador": { "col": 5, "fila": 14 },
+  "meta": { "col": 5, "fila": 0 },
+  "vidasIniciales": 3,
+  "semaforos": [
+    { "col": 5, "fila": 12, "cicloMs": 2200, "carrilAsociado": 0 },
+    { "col": 5, "fila": 2, "cicloMs": 2000, "carrilAsociado": 2 }
+  ],
+  "carriles": [
+    {
+      "fila": 11,
+      "direccion": 1,
+      "velocidad": 1.3,
+      "autos": [
+        { "colInicial": 0 },
+        { "colInicial": 3 },
+        { "colInicial": 6 },
+        { "colInicial": 9 }
+      ]
+    },
+    {
+      "fila": 7,
+      "direccion": -1,
+      "velocidad": 1.8,
+      "autos": [
+        { "colInicial": 1 },
+        { "colInicial": 4 },
+        { "colInicial": 7 }
+      ]
+    },
+    {
+      "fila": 3,
+      "direccion": 1,
+      "velocidad": 2.2,
+      "autos": [
+        { "colInicial": 0 },
+        { "colInicial": 2 },
+        { "colInicial": 4 },
+        { "colInicial": 6 },
+        { "colInicial": 8 }
+      ]
+    }
+  ]
+}

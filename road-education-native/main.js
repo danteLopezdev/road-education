@@ -31,7 +31,9 @@ function crearVentana() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 700,
-    resizable: false,
+    minWidth: 500,
+    minHeight: 500,
+    resizable: true,
     autoHideMenuBar: true,
     webPreferences: {
       contextIsolation: true,
@@ -142,8 +144,25 @@ ipcMain.handle('colisiones:estaEnZona', (event, x, y) => {
 // la configuracion de seguridad de Electron.
 ipcMain.handle('nivel:leerArchivo', (event, nombreArchivo) => {
   const rutaArchivo = path.join(__dirname, '..', 'niveles', nombreArchivo);
+
+  if (!fs.existsSync(rutaArchivo)) {
+    throw new Error(`No existe el archivo de nivel: ${rutaArchivo}`);
+  }
+
   const contenido = fs.readFileSync(rutaArchivo, 'utf-8');
-  return JSON.parse(contenido);
+
+  if (!contenido.trim()) {
+    throw new Error(
+      `"${nombreArchivo}" está vacío (0 bytes) en ${rutaArchivo}. ` +
+      `Verifica que el contenido del nivel se haya guardado ahí.`
+    );
+  }
+
+  try {
+    return JSON.parse(contenido);
+  } catch (error) {
+    throw new Error(`"${nombreArchivo}" tiene JSON inválido: ${error.message}`);
+  }
 });
 
 ipcMain.handle('nivel:cargarDesdeJson', (event, nivelData) => {

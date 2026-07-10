@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Peatón visto desde arriba. Sin orientación direccional: el
+       movimiento es por grid en 4 direcciones, así que un ícono
+       simétrico evita tener que rotar el sprite en cada tecla. -->
+
+  <!-- sombra -->
+  <ellipse cx="50" cy="56" rx="28" ry="24" fill="#000000" opacity="0.25"/>
+
+  <!-- hombros / torso -->
+  <ellipse cx="50" cy="58" rx="26" ry="22" fill="#00c8ff"/>
+  <ellipse cx="50" cy="58" rx="26" ry="22" fill="url(#playerShade)"/>
+
+  <!-- mochila / detalle central -->
+  <rect x="42" y="46" width="16" height="24" rx="6" fill="#0092c2"/>
+
+  <!-- cabeza -->
+  <circle cx="50" cy="34" r="17" fill="#ffd9b3"/>
+  <circle cx="50" cy="34" r="17" fill="url(#headShade)"/>
+
+  <!-- pequeño indicador frontal (referencia visual, no rotacional) -->
+  <circle cx="50" cy="34" r="4" fill="#7a4a26" opacity="0.5"/>
+
+  <defs>
+    <radialGradient id="playerShade" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="headShade" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

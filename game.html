@@ -17,6 +17,18 @@
 
   <div id="juegoContainer">
     <canvas id="gameCanvas" width="400" height="600"></canvas>
+
+    <div id="pantallaVictoria" class="oculto">
+      <div class="panelVictoria">
+        <div class="tituloVictoria">¡Recorrido completado!</div>
+        <p class="subtituloVictoria">Cruzaste los 3 niveles de Road Education.</p>
+        <div class="puntajeFinal">Puntaje final: <span id="puntajeFinalValor">0</span></div>
+        <div class="botonesVictoria">
+          <button id="btnJugarDeNuevo">Jugar de nuevo</button>
+          <button id="btnSalirVictoria">Salir</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script type="module" src="scripts/game.js"></script>
