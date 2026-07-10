@@ -33,6 +33,7 @@ contextBridge.exposeInMainWorld('api', {
   estaEnZona: (x, y) => ipcRenderer.invoke('colisiones:estaEnZona', x, y),
 
   // --- Nivel / Escenario ---
+  leerNivelJson: (nombreArchivo) => ipcRenderer.invoke('nivel:leerArchivo', nombreArchivo),
   cargarNivelDesdeJson: (nivelData) => ipcRenderer.invoke('nivel:cargarDesdeJson', nivelData),
   validarRegla: (accion) => ipcRenderer.invoke('nivel:validarRegla', accion),
   esCompletado: () => ipcRenderer.invoke('nivel:esCompletado'),

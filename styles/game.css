@@ -3,6 +3,30 @@
   padding: 0;
   box-sizing: border-box;
 }
+/* Agregar a styles/game.css, junto a la regla existente de #puntaje span.
+   Mismo lenguaje visual: color celeste con text-shadow, consistente con
+   #puntaje. */
+
+#vidas {
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+#vidas span {
+  color: #00c8ff;
+  text-shadow: 0 0 8px rgba(0, 200, 255, 0.8);
+  font-weight: 700;
+}
+
+/* Si el HUD usa flexbox con justify-content: space-between (dos elementos
+   en los extremos), al agregar #vidas como tercer hijo hay que ajustar el
+   layout para que quede: puntaje | vidas | salir. Opción simple: */
+#hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px; /* separa los 3 bloques si space-between no es suficiente */
+}
 
 html, body {
   height: 100%;

@@ -37,6 +37,13 @@ private:
     Napi::Value AgregarObstaculo(const Napi::CallbackInfo& info);
     Napi::Value ObstaculosActivos(const Napi::CallbackInfo& info);
     Napi::Value Limpiar(const Napi::CallbackInfo& info);
+
+    // JS: escenarioNativo.moverObstaculo(index, dx, dy)
+    // A diferencia de obstaculosActivos() (que devuelve COPIAS), este
+    // metodo muta el Obstaculo real dentro de escenario_.obstaculos,
+    // por indice. Necesario porque obstaculosActivos() no sirve para
+    // mover autos de forma persistente (ver discusion en el chat).
+    Napi::Value MoverObstaculo(const Napi::CallbackInfo& info);
 };
 
 #endif // NAPI_ESCENARIO_WRAP_H

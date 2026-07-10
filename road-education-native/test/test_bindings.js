@@ -69,6 +69,17 @@ esc.agregarObstaculo(o);
 const activos = esc.obstaculosActivos();
 verificar(Array.isArray(activos) && activos.length === 1, 'obstaculosActivos() devuelve 1 elemento');
 verificar(activos[0] instanceof native.ObstaculoNativo, 'cada elemento es un ObstaculoNativo real');
+
+// Confirma que moverObstaculo() muta el obstaculo REAL dentro del escenario
+// (a diferencia de mutar una copia obtenida de obstaculosActivos(), que no
+// persiste entre llamadas).
+esc.moverObstaculo(0, 15, -2);
+const activosTrasMover = esc.obstaculosActivos();
+verificar(
+  activosTrasMover[0].x === activos[0].x + 15 && activosTrasMover[0].y === activos[0].y - 2,
+  'moverObstaculo(0, dx, dy) persiste el movimiento entre llamadas'
+);
+
 esc.limpiar();
 verificar(esc.obstaculosActivos().length === 0, 'limpiar() vacia el escenario');
 

@@ -10,6 +10,7 @@
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+const fs = require('fs');
 const addon = require('./index.js'); // delega en 'bindings' -> road_education_native.node
 
 let mainWindow;
@@ -18,8 +19,8 @@ let mainWindow;
 // Se mantienen vivas durante toda la partida; los handlers IPC operan
 // sobre estas mismas instancias en cada llamada (no se recrean por frame).
 
-const CELL = 40;
-const jugadorInstance = new addon.JugadorNativo(5 * CELL, 14 * CELL);// spawn inicial: ajustar segun inicioJugador del nivel
+const CELL = 40; // debe coincidir con CELL en game.js
+const jugadorInstance = new addon.JugadorNativo(5 * CELL, 14 * CELL); // celda {5,14} exacta, ver inicioJugador de nivel1.json
 const puntajeInstance = new addon.PuntajeNativo();
 
 // El escenario se construye desde el JSON del nivel (ver nivel:cargarDesdeJson).
@@ -135,6 +136,16 @@ ipcMain.handle('colisiones:estaEnZona', (event, x, y) => {
 // addon.cargarEscenario(id) para poblar datos -- ver discusion de
 // arquitectura en el chat con Claude / registro de modificaciones.
 
+// Lee un archivo JSON de niveles/ desde disco. Se hace aqui (proceso
+// principal, con acceso a fs) en vez de fetch() en el renderer, porque
+// fetch() de archivos locales bajo file:// puede fallar por CORS segun
+// la configuracion de seguridad de Electron.
+ipcMain.handle('nivel:leerArchivo', (event, nombreArchivo) => {
+  const rutaArchivo = path.join(__dirname, '..', 'niveles', nombreArchivo);
+  const contenido = fs.readFileSync(rutaArchivo, 'utf-8');
+  return JSON.parse(contenido);
+});
+
 ipcMain.handle('nivel:cargarDesdeJson', (event, nivelData) => {
   escenarioInstance = new addon.EscenarioNativo(nivelData.idNivel, nivelData.nombre);
 
@@ -181,17 +192,16 @@ ipcMain.handle('escenario:obstaculosActivos', () => {
   }));
 });
 
-// moverObstaculos: mueve una lista de obstaculos por indice (el orden
-// coincide con el de obstaculosActivos()/agregarObstaculo, en el mismo
-// orden en que se agregaron desde el JSON).
+// moverObstaculos: mueve una lista de obstaculos por indice (el indice
+// coincide con el orden de obstaculosActivos()). Usa
+// escenarioInstance.moverObstaculo(), que muta el obstaculo real dentro
+// del escenario -- NO usa obstaculosActivos()+mover(), porque esa
+// combinacion opera sobre copias y el movimiento no persistiria entre
+// frames (ver discusion de arquitectura).
 ipcMain.handle('escenario:moverObstaculos', (event, movimientos) => {
-  const obstaculos = escenarioInstance.obstaculosActivos();
   movimientos.forEach(({ index, dx, dy }) => {
-    if (obstaculos[index]) {
-      obstaculos[index].mover(dx, dy ?? 0);
-    }
+    escenarioInstance.moverObstaculo(index, dx, dy ?? 0);
   });
-  return obstaculos.map((o) => ({ x: o.x, y: o.y }));
 });
 
 // --- Puntaje ---

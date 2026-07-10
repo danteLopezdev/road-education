@@ -1,0 +1,23 @@
+{
+  "idNivel": 1,
+  "nombre": "Calle simple",
+  "columnas": 10,
+  "filas": 15,
+  "inicioJugador": { "col": 5, "fila": 14 },
+  "meta": { "col": 5, "fila": 0 },
+  "vidasIniciales": 3,
+  "semaforos": [
+    { "col": 5, "fila": 8, "cicloMs": 3000, "carrilAsociado": 0 }
+  ],
+  "carriles": [
+    {
+      "fila": 7,
+      "direccion": 1,
+      "velocidad": 1,
+      "autos": [
+        { "colInicial": 0 },
+        { "colInicial": 5 }
+      ]
+    }
+  ]
+}
