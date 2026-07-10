@@ -4,52 +4,75 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  user-select: none;
+}
+
 body {
-  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-  font-family: 'Segoe UI', Arial, sans-serif;
-  overflow: hidden;
+  background-image:
+    linear-gradient(rgba(5, 10, 20, 0.75), rgba(5, 10, 20, 0.85)),
+    url('../assets/images/bg-road.png');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
 }
 
 #menu {
   text-align: center;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  padding: 60px 80px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  animation: fadeIn 1s ease-in;
 }
 
 #menu h1 {
-  color: #f4d35e;
-  font-size: 2.5rem;
-  margin-bottom: 40px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  letter-spacing: 1px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 3.5rem;
+  letter-spacing: 3px;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(0, 200, 255, 0.7),
+               0 0 40px rgba(0, 200, 255, 0.4),
+               0 4px 10px rgba(0, 0, 0, 0.6);
 }
 
 #btnJugar {
-  background: #e63946;
-  color: white;
-  border: none;
-  padding: 16px 48px;
+  padding: 18px 60px;
+  font-family: 'Orbitron', sans-serif;
   font-size: 1.3rem;
-  font-weight: bold;
-  border-radius: 50px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #fff;
+  background: linear-gradient(180deg, #00c8ff 0%, #0072ff 100%);
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
-  letter-spacing: 1px;
+  box-shadow: 0 0 15px rgba(0, 150, 255, 0.5),
+              inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  text-transform: uppercase;
 }
 
 #btnJugar:hover {
-  background: #d62839;
-  transform: scale(1.05);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 200, 255, 0.8),
+              inset 0 -3px 0 rgba(0, 0, 0, 0.2);
 }
 
 #btnJugar:active {
-  transform: scale(0.98);
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 0 10px rgba(0, 150, 255, 0.4);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }

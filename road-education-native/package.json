@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Addon nativo en C++ (N-API) para Road Education: fisica, colisiones, puntaje y niveles.",
   "private": true,
-  "main": "index.js",
+  "main": "main.js",
   "gypfile": true,
   "scripts": {
     "build": "node-gyp rebuild",

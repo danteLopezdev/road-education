@@ -2,13 +2,21 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Car Drift</title>
+  <title>Road Education</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/game.css">
 </head>
 <body>
-  <div id="usuario"></div>
-  <div id="puntaje"></div>
-  <button id="btnLogout">Cerrar sesión</button>
-  <canvas id="gameCanvas" width="400" height="600"></canvas>
+  <div id="hud">
+    <div id="puntaje">Puntaje: <span id="puntajeValor">0</span></div>
+    <button id="btnSalir">Salir</button>
+  </div>
+
+  <div id="juegoContainer">
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+  </div>
 
   <script type="module" src="scripts/game.js"></script>
 </body>
