@@ -8,8 +8,8 @@
   "scripts": {
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean",
-    "test": "node test/test_bindings.js",
-    "start": "electron ."
+    "start": "electron .",
+    "test": "node test/test_bindings.js"
   },
   "dependencies": {
     "bindings": "^1.5.0",

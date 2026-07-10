@@ -13,6 +13,7 @@ Napi::Object JugadorWrap::Init(Napi::Env env, Napi::Object exports) {
         InstanceMethod("mover", &JugadorWrap::Mover),
         InstanceMethod("perderVida", &JugadorWrap::PerderVida),
         InstanceMethod("resetPosicion", &JugadorWrap::ResetPosicion),
+        InstanceMethod("resetCompleto", &JugadorWrap::ResetCompleto),
     });
 
     constructor = Napi::Persistent(func);
@@ -74,5 +75,11 @@ Napi::Value JugadorWrap::PerderVida(const Napi::CallbackInfo& info) {
 // JS: jugadorNativo.resetPosicion()
 Napi::Value JugadorWrap::ResetPosicion(const Napi::CallbackInfo& info) {
     jugador_.resetPosicion();
+    return info.Env().Undefined();
+}
+
+// JS: jugadorNativo.resetCompleto()
+Napi::Value JugadorWrap::ResetCompleto(const Napi::CallbackInfo& info) {
+    jugador_.resetCompleto();
     return info.Env().Undefined();
 }

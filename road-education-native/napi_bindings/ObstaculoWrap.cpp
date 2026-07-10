@@ -16,6 +16,7 @@ Napi::Object ObstaculoWrap::Init(Napi::Env env, Napi::Object exports) {
         InstanceMethod("activar", &ObstaculoWrap::Activar),
         InstanceMethod("desactivar", &ObstaculoWrap::Desactivar),
         InstanceMethod("colisionaCon", &ObstaculoWrap::ColisionaCon),
+        InstanceMethod("mover", &ObstaculoWrap::Mover),
     });
 
     constructor = Napi::Persistent(func);
@@ -104,4 +105,19 @@ Napi::Value ObstaculoWrap::ColisionaCon(const Napi::CallbackInfo& info) {
     JugadorWrap* jw = Napi::ObjectWrap<JugadorWrap>::Unwrap(info[0].As<Napi::Object>());
     bool resultado = obstaculo_.colisionaCon(jw->Get());
     return Napi::Boolean::New(env, resultado);
+}
+
+// JS: obstaculoNativo.mover(dx, dy)
+Napi::Value ObstaculoWrap::Mover(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 2 || !info[0].IsNumber() || !info[1].IsNumber()) {
+        Napi::TypeError::New(env, "mover(dx, dy) espera dos numeros").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    float dx = info[0].As<Napi::Number>().FloatValue();
+    float dy = info[1].As<Napi::Number>().FloatValue();
+    obstaculo_.mover(dx, dy);
+    return env.Undefined();
 }

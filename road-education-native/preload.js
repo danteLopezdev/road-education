@@ -1,38 +1,51 @@
 // preload.js
-// Puente seguro entre el renderer (game.js) y el proceso principal (main.js).
-// Aquí NO se importa el addon C++ directamente: eso vive en main.js.
-// Este archivo solo expone funciones "seguras" al mundo del renderer.
+// Puente seguro entre el renderer (Canvas 2D) y main.js, via
+// contextBridge + ipcRenderer.invoke. contextIsolation: true y
+// nodeIntegration: false en el BrowserWindow (ver main.js) obligan a
+// pasar por aqui -- el renderer nunca toca Node ni el addon directo.
+//
+// Cadena de acceso (ver README del proyecto):
+//   renderer (Canvas 2D) -> ipcRenderer -> preload.js (este archivo)
+//   -> main.js -> require('./index.js') -> addon nativo C++
+//
+// Responsable de esta capa: Dante
 
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
-  // ---- FÍSICA ----
-  // Recibe posición, velocidad y delta time; devuelve la nueva posición calculada por el addon C++.
-  calcularMovimiento: (x, y, vel, delta) =>
-    ipcRenderer.invoke('fisica:calcularMovimiento', { x, y, vel, delta }),
+  // --- Fisica ---
+  // Disponible por si se necesita (ej. animaciones con aceleracion);
+  // el movimiento del jugador por grid usa jugador.mover, no esto.
+  calcularPosicion: (delta) => ipcRenderer.invoke('fisica:calcularPosicion', delta),
+  aplicarGravedad: () => ipcRenderer.invoke('fisica:aplicarGravedad'),
+  calcularVelocidad: (vel, acel, delta) =>
+    ipcRenderer.invoke('fisica:calcularVelocidad', vel, acel, delta),
 
-  // ---- COLISIONES ----
-  // Recibe objetos jugador y obstaculo (planos, serializables); devuelve boolean.
-  detectarColision: (jugador, obstaculo) =>
-    ipcRenderer.invoke('colisiones:detectarColision', { jugador, obstaculo }),
+  // --- Jugador ---
+  moverJugador: (dx, dy) => ipcRenderer.invoke('jugador:mover', dx, dy),
+  perderVida: () => ipcRenderer.invoke('jugador:perderVida'),
+  resetPosicionJugador: () => ipcRenderer.invoke('jugador:resetPosicion'),
+  resetCompletoJugador: () => ipcRenderer.invoke('jugador:resetCompleto'),
+  getEstadoJugador: () => ipcRenderer.invoke('jugador:estado'),
 
-  // ---- PUNTAJE ----
-  sumarPuntos: (n) =>
-    ipcRenderer.invoke('puntaje:sumarPuntos', { n }),
+  // --- Colisiones ---
+  detectarColision: () => ipcRenderer.invoke('colisiones:detectarColision'),
+  estaEnZona: (x, y) => ipcRenderer.invoke('colisiones:estaEnZona', x, y),
 
-  getNivel: () =>
-    ipcRenderer.invoke('puntaje:getNivel'),
+  // --- Nivel / Escenario ---
+  cargarNivelDesdeJson: (nivelData) => ipcRenderer.invoke('nivel:cargarDesdeJson', nivelData),
+  validarRegla: (accion) => ipcRenderer.invoke('nivel:validarRegla', accion),
+  esCompletado: () => ipcRenderer.invoke('nivel:esCompletado'),
+  getObstaculosActivos: () => ipcRenderer.invoke('escenario:obstaculosActivos'),
+  moverObstaculos: (movimientos) => ipcRenderer.invoke('escenario:moverObstaculos', movimientos),
 
-  restarVida: () =>
-    ipcRenderer.invoke('puntaje:restarVida'),
+  // --- Puntaje ---
+  sumarPuntos: (n) => ipcRenderer.invoke('puntaje:sumarPuntos', n),
+  getNivel: () => ipcRenderer.invoke('puntaje:getNivel'),
+  restarVidaPuntaje: () => ipcRenderer.invoke('puntaje:restarVida'),
+  resetPuntaje: () => ipcRenderer.invoke('puntaje:reset'),
 
-  resetPuntaje: () =>
-    ipcRenderer.invoke('puntaje:reset'),
-
-  // ---- NAVEGACIÓN ----
-  irAJuego: () =>
-    ipcRenderer.invoke('navegacion:irAJuego'),
-
-  irAMenu: () =>
-    ipcRenderer.invoke('navegacion:irAMenu'),
+  // --- Navegacion ---
+  irAJuego: () => ipcRenderer.invoke('navegacion:irAJuego'),
+  irAMenu: () => ipcRenderer.invoke('navegacion:irAMenu'),
 });

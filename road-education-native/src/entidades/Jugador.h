@@ -24,6 +24,10 @@ public:
     bool estaVivo() const;
     void resetPosicion();
 
+    // Reinicio completo tras fin de partida (vidas en 0): restaura posicion
+    // (via resetPosicion) y ademas repone las vidas a MAX_VIDAS.
+    void resetCompleto();
+
 private:
     float xOrigen, yOrigen;
 };

@@ -22,4 +22,9 @@ void Obstaculo::desactivar() {
     activo = false;
 }
 
+void Obstaculo::mover(float dx, float dy) {
+    x += dx;
+    y += dy;
+}
+
 }

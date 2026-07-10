@@ -35,6 +35,8 @@ private:
     Napi::Value Desactivar(const Napi::CallbackInfo& info);
     // Recibe un JugadorNativo (ver JugadorWrap) como info[0].
     Napi::Value ColisionaCon(const Napi::CallbackInfo& info);
+    // JS: obstaculoNativo.mover(dx, dy) -- desplaza el auto en cada frame.
+    Napi::Value Mover(const Napi::CallbackInfo& info);
 };
 
 #endif // NAPI_OBSTACULO_WRAP_H

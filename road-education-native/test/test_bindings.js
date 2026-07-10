@@ -39,6 +39,12 @@ j.perderVida();
 verificar(j.vidas === vidasAntes - 1, 'perderVida() resta una vida');
 j.resetPosicion();
 verificar(j.x === 10 && j.y === 20, 'resetPosicion() vuelve al spawn');
+j.perderVida();
+j.perderVida();
+j.perderVida();
+verificar(j.vidas === 0, 'perderVida() no baja de 0');
+j.resetCompleto();
+verificar(j.x === 10 && j.y === 20 && j.vidas === 3, 'resetCompleto() restaura posicion y vidas');
 
 console.log('\n=== ObstaculoNativo ===');
 const o = new native.ObstaculoNativo(10, 20, 30, 30, 'hueco');
@@ -48,6 +54,8 @@ verificar(o.activo === false, 'desactivar() funciona');
 o.activar();
 verificar(o.activo === true, 'activar() funciona');
 verificar(typeof o.colisionaCon(j) === 'boolean', 'colisionaCon(jugador) devuelve boolean');
+o.mover(5, -2);
+verificar(o.x === 15 && o.y === 18, 'mover(5, -2) desplaza al obstaculo');
 
 console.log('\n=== FisicaBindings / ColisionesBindings ===');
 verificar(native.calcularVelocidad(0, 10, 2) === 20, 'calcularVelocidad(0,10,2) === 20');

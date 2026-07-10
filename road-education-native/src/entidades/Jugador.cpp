@@ -32,4 +32,9 @@ void Jugador::resetPosicion() {
     enSuelo = false;
 }
 
+void Jugador::resetCompleto() {
+    resetPosicion();
+    vidas = MAX_VIDAS;
+}
+
 }

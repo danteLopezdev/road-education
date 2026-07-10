@@ -26,6 +26,10 @@ public:
 
     void activar();
     void desactivar();
+
+    // Desplaza el obstaculo (uso principal: autos en carriles, movimiento
+    // continuo en pixeles por frame). Simetrico a Jugador::mover.
+    void mover(float dx, float dy);
 };
 
 }

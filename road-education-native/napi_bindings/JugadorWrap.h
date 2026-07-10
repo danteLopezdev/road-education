@@ -41,6 +41,7 @@ private:
     Napi::Value Mover(const Napi::CallbackInfo& info);
     Napi::Value PerderVida(const Napi::CallbackInfo& info);
     Napi::Value ResetPosicion(const Napi::CallbackInfo& info);
+    Napi::Value ResetCompleto(const Napi::CallbackInfo& info);
 };
 
 #endif // NAPI_JUGADOR_WRAP_H
