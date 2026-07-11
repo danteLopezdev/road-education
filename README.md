@@ -114,16 +114,16 @@ El proyecto también se encuentra disponible como aplicación empaquetada (`.exe
 
 | Tecla | Acción |
 |---|---|
-| ↑ / W | Avanzar |
-| ↓ / S | Retroceder |
-| ← / A | Mover a la izquierda |
-| → / D | Mover a la derecha |
+| ↑  | Avanzar |
+| ↓ | Retroceder |
+| ← | Mover a la izquierda |
+| → | Mover a la derecha |
 
 ## Autores
 
 Trabajo elaborado por los integrantes del equipo del curso de Lenguaje de Programación I:
 
-- **López Flores, Dante**
+- **Lopez Flores, Dante**
 - **Castillo Benítez, Lutber Saúl**
 - **Villegas Ancajima, Marlon**
 
@@ -137,4 +137,4 @@ Trabajo elaborado por los integrantes del equipo del curso de Lenguaje de Progra
 
 ## Licencia
 
-Proyecto desarrollado con fines académicos en el marco del curso de Lenguaje de Programación I de la Universidad Científica del Sur. Su uso y distribución quedan sujetos a lo dispuesto por los autores y la institución.
+Proyecto desarrollado con fines académicos en el marco del curso de Lenguaje de Programación I de la Universidad Científica del Sur. Su uso y distribución quedan sujetos a lo dispuesto por los autores.
